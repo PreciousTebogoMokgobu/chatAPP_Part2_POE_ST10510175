@@ -1,0 +1,7 @@
+/build/
+/dist/
+/nbproject/
+*.class
+*.mp4
+Thumbs.db
+.DS_Store

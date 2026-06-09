@@ -13,14 +13,29 @@ public class Message {
     private int totalMessagesSent;
     private final int maxMessages;
     
+    //  Arrays
+    private final ArrayList<String> sentMessagesArray;
+    private final ArrayList<String> disregardedMessagesArray;
+    private final ArrayList<String> storedMessagesArray;
+    private final ArrayList<String> messageHashArray;
+    private final ArrayList<String> messageIDArray;
+    
     public Message(int maxMessages) {
         this.messages = new ArrayList<>();
         this.totalMessagesSent = 0;
         this.maxMessages = maxMessages;
+        
+        // Initializing arrays
+        this.sentMessagesArray = new ArrayList<>();
+        this.disregardedMessagesArray = new ArrayList<>();
+        this.storedMessagesArray = new ArrayList<>();
+        this.messageHashArray = new ArrayList<>();
+        this.messageIDArray = new ArrayList<>();
     }
     
     private class MessageObject {
         String messageID;
+        int messageNumber;
         String recipient;
         String messageText;
         String messageHash;
@@ -29,12 +44,15 @@ public class Message {
         MessageObject(String messageID, int messageNumber, String recipient, 
                       String messageText, String messageHash, String status) {
             this.messageID = messageID;
+            this.messageNumber = messageNumber;
             this.recipient = recipient;
             this.messageText = messageText;
             this.messageHash = messageHash;
             this.status = status;
         }
     }
+    
+  
     
     public boolean checkMessageID(String messageID) {
         return messageID != null && messageID.length() <= 10;
@@ -76,23 +94,29 @@ public class Message {
         String status;
         String returnMessage;
         
+        // Adding to ID and Hash arrays 
+        messageIDArray.add(messageID);
+        messageHashArray.add(messageHash);
+        
         switch (choice) {
-            case 1 -> {
+            case 1:
                 status = "sent";
                 returnMessage = "Message successfully sent.";
                 totalMessagesSent++;
-            }
-            case 2 -> {
+                sentMessagesArray.add(messageText);
+                break;
+            case 2:
                 status = "disregarded";
                 returnMessage = "Press 0 to delete the message.";
-            }
-            case 3 -> {
+                disregardedMessagesArray.add(messageText);
+                break;
+            case 3:
                 status = "stored";
                 returnMessage = "Message successfully stored.";
-            }
-            default -> {
+                storedMessagesArray.add(messageText);
+                break;
+            default:
                 return "Invalid option selected.";
-            }
         }
         
         MessageObject msg = new MessageObject(messageID, messageNumber, recipient, 
@@ -138,5 +162,109 @@ public class Message {
     
     public int getCurrentMessageCount() {
         return messages.size();
+    }
+    
+    //METHODS
+    
+    public String displayStoredMessages() {
+        if (storedMessagesArray.isEmpty()) {
+            return "No stored messages found.";
+        }
+        
+        StringBuilder output = new StringBuilder();
+        output.append("\n--- STORED MESSAGES ---\n");
+        for (int i = 0; i < storedMessagesArray.size(); i++) {
+            output.append((i + 1) + ". Message: " + storedMessagesArray.get(i) + "\n");
+        }
+        return output.toString();
+    }
+    
+    public String findLongestMessage() {
+        if (storedMessagesArray.isEmpty()) {
+            return "No stored messages to check.";
+        }
+        
+        String longest = storedMessagesArray.get(0);
+        for (String msg : storedMessagesArray) {
+            if (msg.length() > longest.length()) {
+                longest = msg;
+            }
+        }
+        return longest;
+    }
+    
+    public String searchByMessageID(String searchID) {
+        for (int i = 0; i < messageIDArray.size(); i++) {
+            if (messageIDArray.get(i).equals(searchID)) {
+                return "Message found: " + messages.get(i).messageText;
+            }
+        }
+        return "Message ID not found.";
+    }
+    
+    public String searchByRecipient(String recipientNumber) {
+        StringBuilder results = new StringBuilder();
+        boolean found = false;
+        
+        for (MessageObject msg : messages) {
+            if (msg.recipient.equals(recipientNumber)) {
+                results.append("Message: ").append(msg.messageText).append("\n");
+                found = true;
+            }
+        }
+        
+        if (found) {
+            return results.toString();
+        }
+        return "No messages found for recipient: " + recipientNumber;
+    }
+    
+    public String deleteByHash(String hashToDelete) {
+        for (int i = 0; i < messageHashArray.size(); i++) {
+            if (messageHashArray.get(i).equals(hashToDelete)) {
+                messageHashArray.remove(i);
+                messageIDArray.remove(i);
+                messages.remove(i);
+                return "Message with hash " + hashToDelete + " successfully deleted.";
+            }
+        }
+        return "Message hash not found.";
+    }
+    
+    public String displayReport() {
+        if (messages.isEmpty()) {
+            return "No messages to display in report.";
+        }
+        
+        StringBuilder report = new StringBuilder();
+        report.append("\n========== MESSAGE REPORT ==========\n");
+        
+        for (MessageObject msg : messages) {
+            report.append("Message Hash: ").append(msg.messageHash).append("\n");
+            report.append("Recipient: ").append(msg.recipient).append("\n");
+            report.append("Message: ").append(msg.messageText).append("\n");
+            report.append("Status: ").append(msg.status).append("\n");
+            report.append("------------------------------------\n");
+        }
+        
+        return report.toString();
+    }
+    
+    //  GETTERS FOR TESTING 
+    
+    public ArrayList<String> getSentMessagesArray() { 
+        return sentMessagesArray; 
+    }
+    
+    public ArrayList<String> getStoredMessagesArray() { 
+        return storedMessagesArray; 
+    }
+    
+    public ArrayList<String> getMessageHashArray() { 
+        return messageHashArray; 
+    }
+    
+    public ArrayList<String> getMessageIDArray() { 
+        return messageIDArray; 
     }
 }

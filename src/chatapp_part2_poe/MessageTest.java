@@ -19,7 +19,7 @@ public class MessageTest {
     
     @Test
     public void testMessageLengthSuccess() {
-        String result = message.checkMessageLength("Hi Mike, can you join us for dinner tonight?");
+        String result = message.checkMessageLength("Hi Tebogo, can you join us for dinner tonight?");
         assertEquals("Message ready to send.", result);
     }
     
@@ -35,7 +35,7 @@ public class MessageTest {
     
     @Test
     public void testRecipientCellSuccess() {
-        String result = message.checkRecipientCell("+27718693002");
+        String result = message.checkRecipientCell("+27664782377");
         assertEquals("Cell phone number successfully captured.", result);
     }
     
@@ -49,7 +49,7 @@ public class MessageTest {
     public void testMessageHashCorrect() {
         String messageID = "0012345678";
         int messageNumber = 0;
-        String messageText = "Hi Mike, can you join us for dinner tonight?";
+        String messageText = "Hi Tebogo, can you join us for dinner tonight?";
         String result = message.createMessageHash(messageID, messageNumber, messageText);
         assertEquals("00:0:HITONIGHT?", result);
     }

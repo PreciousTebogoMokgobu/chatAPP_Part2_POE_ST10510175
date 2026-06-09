@@ -83,7 +83,6 @@ public class Main {
                 return;
             }
             
-            // ===== MESSAGING SECTION =====
             System.out.println("\n" + "=".repeat(50));
             System.out.println("Welcome to QuickChat");
             System.out.println("=".repeat(50));
@@ -102,24 +101,21 @@ public class Main {
                 System.out.println("1. Send Messages");
                 System.out.println("2. Show recently sent messages (Coming Soon)");
                 System.out.println("3. Quit");
+                System.out.println("4. Stored Messages Menu");
                 System.out.print("\nEnter your choice: ");
                 
                 int choice = input.nextInt();
                 input.nextLine();
                 
                 switch (choice) {
-                    case 1:
-                        sendMessage(input, messagingSystem);
-                        break;
-                    case 2:
-                        System.out.println("\nComing Soon.");
-                        break;
-                    case 3:
+                    case 1 -> sendMessage(input, messagingSystem);
+                    case 2 -> System.out.println("\nComing Soon.");
+                    case 3 -> {
                         running = false;
                         System.out.println("\nThank you for using QuickChat. Goodbye!");
-                        break;
-                    default:
-                        System.out.println("\nInvalid choice. Please try again.");
+                    }
+                    case 4 -> storedMessagesMenu(input, messagingSystem);
+                    default -> System.out.println("\nInvalid choice. Please try again.");
                 }
             }
             
@@ -199,6 +195,53 @@ public class Main {
             System.out.println("Message Hash: " + messageHash);
             System.out.println("Recipient: " + recipient);
             System.out.println("Message: " + messageText);
+        }
+    }
+    
+    private static void storedMessagesMenu(Scanner input, Message messagingSystem) {
+        boolean back = false;
+        
+        while (!back) {
+            System.out.println("\n----------------------------------------");
+            System.out.println("STORED MESSAGES MENU");
+            System.out.println("----------------------------------------");
+            System.out.println("1. Display all stored messages");
+            System.out.println("2. Find the longest stored message");
+            System.out.println("3. Search for a message by ID");
+            System.out.println("4. Search for messages by recipient");
+            System.out.println("5. Delete a message using message hash");
+            System.out.println("6. Display full report");
+            System.out.println("7. Back to Main Menu");
+            System.out.print("\nEnter your choice: ");
+            
+            int choice = input.nextInt();
+            input.nextLine();
+            
+            switch (choice) {
+                case 1 -> System.out.println(messagingSystem.displayStoredMessages());
+                case 2 -> System.out.println("\nLongest Message: " + messagingSystem.findLongestMessage());
+                case 3 -> {
+                    System.out.print("Enter Message ID to search: ");
+                    String searchID = input.nextLine();
+                    System.out.println(messagingSystem.searchByMessageID(searchID));
+                }
+                case 4 -> {
+                    System.out.print("Enter recipient number: ");
+                    String recipient = input.nextLine();
+                    System.out.println(messagingSystem.searchByRecipient(recipient));
+                }
+                case 5 -> {
+                    System.out.print("Enter Message Hash to delete: ");
+                    String hash = input.nextLine();
+                    System.out.println(messagingSystem.deleteByHash(hash));
+                }
+                case 6 -> System.out.println(messagingSystem.displayReport());
+                case 7 -> {
+                    back = true;
+                    System.out.println("\nReturning to Main Menu...");
+                }
+                default -> System.out.println("Invalid choice. Try again.");
+            }
         }
     }
 }
